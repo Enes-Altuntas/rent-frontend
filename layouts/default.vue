@@ -1,11 +1,12 @@
 <template>
   <v-app dark>
-    <div class="loading-page" v-if="loading">
+    <div v-if="loading" class="loading-page">
       <div class="lds-hourglass"></div>
     </div>
-    <v-navigation-drawer clipped fixed app>
+    <v-navigation-drawer v-model="drawer" app
+                         clipped>
       <v-list shaped>
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact color="primary">
+        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" color="secondary" exact router>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -15,11 +16,12 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar clipped-left fixed app color="primary" light>
-      <v-toolbar-title color="appBarTitle">{{ title }}</v-toolbar-title>
+    <v-app-bar app clipped-left color="primary" dark fixed>
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title class="font-weight-bold" color="appBarTitle">{{ title }}</v-toolbar-title>
     </v-app-bar>
     <v-main>
-      <Nuxt />
+      <Nuxt/>
     </v-main>
   </v-app>
 </template>
@@ -77,12 +79,13 @@
 </style>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import {mapActions, mapState} from 'vuex'
 
 export default {
   name: 'DefaultLayout',
   data() {
     return {
+      drawer: false,
       items: [
         {
           icon: 'mdi-home',
@@ -105,14 +108,14 @@ export default {
           to: '/lands'
         },
         {
-          icon: 'mdi-account',
-          title: 'Profil',
-          to: '/profile'
+          icon: 'mdi-account-cash',
+          title: 'Mal Sahipleri',
+          to: '/owners'
         },
         {
-          icon: 'mdi-logout',
-          title: 'Çıkış Yap',
-          to: '/logout'
+          icon: 'mdi-account-supervisor',
+          title: 'Sorumlu Personeller',
+          to: '/employees'
         }
       ],
       title: 'Apartman Yönetim Sistemi'
@@ -125,24 +128,24 @@ export default {
     }),
   },
 
-  mounted() {
-    this.getCurrencyData()
-    this.getFlatTypeData()
+  async mounted() {
+    await this.getCurrencyDropdown()
+    await this.getFlatTypeDropdown()
+    await this.getFlatUsageDropdown()
+    await this.getFlatStatusDropdown()
+    await this.getEmployeeDropdown()
+    await this.getOwnerDropdown()
   },
 
   methods: {
     ...mapActions({
-      getCurrencies: "getCurrencies",
-      getFlatTypes: "getFlatTypes"
-    }),
-
-    async getCurrencyData() {
-      await this.getCurrencies()
-    },
-
-    async getFlatTypeData() {
-      await this.getFlatTypes()
-    },
+      getCurrencyDropdown: "getCurrencyDropdown",
+      getFlatTypeDropdown: "getFlatTypeDropdown",
+      getFlatUsageDropdown: "getFlatUsageDropdown",
+      getFlatStatusDropdown: "getFlatStatusDropdown",
+      getEmployeeDropdown: "getEmployeeDropdown",
+      getOwnerDropdown: "getOwnerDropdown"
+    })
   }
 }
 </script>
